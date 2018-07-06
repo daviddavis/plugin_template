@@ -37,9 +37,24 @@ def synchronize(remote_pk, repository_pk):
 
     with WorkingDirectory():
         with RepositoryVersion.create(repository) as new_version:
-            log.info(
-                _('Synchronizing: repository=%(r)s remote=%(p)s'),
-                {
-                    'r': repository.name,
-                    'p': remote.name
-                })
+
+
+            # Use changeset to add and remove content
+            changeset = ChangeSet(
+                remote=remote,
+                repository_version=new_version,
+                additions=(),
+                removals=())
+
+            for report in changeset.apply():
+                log.debug(
+                    _('Applied: repository=%(r)s remote=%(p)s change:%(c)s'),
+                    {
+                        'r': repository.name,
+                        'p': remote.name,
+                        'c': report,
+                    })
+
+            # add and remove content without changeset
+            # new_version.add_content(content)
+            # new_version.remove_content(content)

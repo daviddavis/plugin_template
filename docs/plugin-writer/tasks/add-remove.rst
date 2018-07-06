@@ -1,8 +1,29 @@
 Adding and Removing Content
 ===========================
 
-TODO: RepositoryVersion
-https://pulp.plan.io/issues/3220
+Repositories have versions. A new immutable respository version is created when its set of content
+units changes
+
+To facilitate the creation of repository versions a
+:class:`~pulpcore.plugin.models.RepositoryVersion` context manager is provided. Plugin Writers are
+strongly encouraged to use RepositoryVersion as a context manager to provide transactional safety,
+working directory setup, and database cleanup after encountering failures.
+
+.. code-block:: python
+
+     with RepositoryVersion.create(repository) as new_version:
+
+        # add content manually
+        new_version.add_content(content)
+        new_version.remove_content(content)
+
+        # add content with changeset
+        changeset = ChangeSet(
+            remote=remote,
+            repository_version=new_version,
+            additions=additions,
+            removals=removals)
+        changeset.apply()
 
 Synchronizing
 -------------
