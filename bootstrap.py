@@ -166,6 +166,12 @@ def main():
                             Exclude pydocstyle check in Travis CI
 
                         '''))
+    parser.add_argument('--irc-channel', type=str,
+                        help=textwrap.dedent('''\
+                            Channel to have travis notify when builds fail or are fixed.
+
+                        '''))
+
     args = parser.parse_args()
 
     config = {}
