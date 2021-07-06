@@ -104,7 +104,7 @@ echo "Checking for uncommitted migrations..."
 cmd_prefix bash -c "django-admin makemigrations --check --dry-run"
 
 # Run unit tests.
-cmd_prefix bash -c "PULP_DATABASES__default__USER=postgres django-admin test --noinput /usr/local/lib/python3.6/site-packages/{{ plugin_snake }}/tests/unit/"
+cmd_prefix bash -c "PULP_DATABASES__default__USER=postgres django-admin test --noinput /usr/local/lib/python3.8/site-packages/{{ plugin_snake }}/tests/unit/"
 
 # Run functional tests
 {%- if plugin_name == 'pulpcore' %}
@@ -112,6 +112,14 @@ export PYTHONPATH=$REPO_ROOT${PYTHONPATH:+:${PYTHONPATH}}
 {%- else %}
 export PYTHONPATH=$REPO_ROOT:$REPO_ROOT/../pulpcore${PYTHONPATH:+:${PYTHONPATH}}
 {%- endif %}
+
+# this shouldn't be needed!?
+cmd_prefix bash -c "s6-svc -d /var/run/s6/services/pulpcore-resource-manager"
+cmd_prefix bash -c "s6-svc -d /var/run/s6/services/pulpcore-worker@1"
+cmd_prefix bash -c "s6-svc -d /var/run/s6/services/pulpcore-worker@2"
+cmd_prefix bash -c "s6-svc -u /var/run/s6/services/new-pulpcore-resource-manager"
+cmd_prefix bash -c "s6-svc -u /var/run/s6/services/new-pulpcore-worker@1"
+cmd_prefix bash -c "s6-svc -u /var/run/s6/services/new-pulpcore-worker@2"
 
 {% if upgrade_range %}
 if [[ "$TEST" == "upgrade" ]]; then

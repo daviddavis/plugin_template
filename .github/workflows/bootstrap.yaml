@@ -119,6 +119,10 @@ jobs:
         run: |
           .github/workflows/scripts/before_script.sh
 
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        timeout-minutes: 15
+
       - name: Script
         run: .github/workflows/scripts/script.sh
         shell: bash
